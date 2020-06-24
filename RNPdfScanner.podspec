@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license        = package['license']
   s.author         = package['author']
   s.homepage       = 'https://github.com/buchereli/react-native-document-scanner'
-  s.source         = { :git => 'https://github.com/buchereli/react-native-document-scanner.git', :branch => 'master' }
+  s.source         = { :git => 'https://github.com/buchereli/react-native-document-scanner.git', :branch => 'ios' }
 
   s.requires_arc   = true
   s.platform       = :ios, '10.0'

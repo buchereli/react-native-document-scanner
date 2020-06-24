@@ -1,6 +1,6 @@
 require 'json'
 
-package = JSON.parse(File.read(File.join(__dir__, '../package.json')))
+package = JSON.parse(File.read(File.join(__dir__, './package.json')))
 
 Pod::Spec.new do |s|
   s.name           = 'RNPdfScanner'
@@ -9,14 +9,14 @@ Pod::Spec.new do |s|
   s.description    = package['description']
   s.license        = package['license']
   s.author         = package['author']
-  s.homepage       = 'https://github.com/Woonivers/react-native-document-scanner'
-  s.source         = { :git => 'https://github.com/Woonivers/react-native-document-scanner.git', :tag => s.version }
+  s.homepage       = 'https://github.com/buchereli/react-native-document-scanner'
+  s.source         = { :git => 'https://github.com/buchereli/react-native-document-scanner.git', :branch => 'master' }
 
   s.requires_arc   = true
-  s.platform       = :ios, '8.0'
+  s.platform       = :ios, '10.0'
 
   s.preserve_paths = 'README.md', 'package.json', 'index.js'
-  s.source_files   = '*.{h,m}'
+  s.source_files   = 'ios/**/*.{h,m}'
 
   s.dependency 'React'
 end

@@ -1,5 +1,5 @@
 {
-  "name": "@woonivers/react-native-document-scanner",
+  "name": "react-native-document-scanner",
   "version": "2.0.1",
   "description": "Scan documents, automatic border detection, automatic crop",
   "main": "lib/module/index.js",
@@ -38,14 +38,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Woonivers/react-native-document-scanner"
+    "url": "https://github.com/buchereli/react-native-document-scanner"
   },
-  "author": "Woonivers (https://woonivers.com)",
+  "author": "buchereli",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Woonivers/react-native-document-scanner/issues"
+    "url": "https://github.com/buchereli/react-native-document-scanner/issues"
   },
-  "homepage": "https://github.com/Woonivers/react-native-document-scanner#readme",
+  "homepage": "https://github.com/buchereli/react-native-document-scanner#readme",
   "devDependencies": {
     "@babel/runtime": "^7.5.5",
     "@commitlint/config-conventional": "^8.0.0",

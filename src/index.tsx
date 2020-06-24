@@ -111,7 +111,7 @@ class PdfScanner extends React.Component<PdfScannerProps> {
 
   capture () {
     if (this._scannerHandle) {
-      ScannerManager.capture(this._scannerHandle)
+      ScannerManager.capture()
     }
   }
 

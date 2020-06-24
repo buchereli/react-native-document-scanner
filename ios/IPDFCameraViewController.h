@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, IPDFRectangeType)
 
 @property (nonatomic,assign) IPDFCameraViewType cameraViewType;
 
-- (void)focusAtPoint:(CGPoint)point completionHandler:(void(^)(void))completionHandler;
+- (void)focusAtPoint:(CGPoint)point completionHandler:(void(^)())completionHandler;
 
 - (void)captureImageWithCompletionHander:(void(^)(UIImage *data, UIImage *initialData, CIRectangleFeature *rectangleFeature))completionHandler;
 

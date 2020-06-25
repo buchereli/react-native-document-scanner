@@ -111,7 +111,7 @@ class PdfScanner extends React.Component<PdfScannerProps> {
 
   format () {
     console.log('ScannerManager Format call');
-    ScannerManager.format(function(err, res) {
+    ScannerManager.format(function(err:any, res:any) {
       console.log('ScannerManager Format result');
       console.log(res);
     });

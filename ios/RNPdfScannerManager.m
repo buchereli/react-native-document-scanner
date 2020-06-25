@@ -1,5 +1,6 @@
 
 #import "RNPdfScannerManager.h"
+#import <React/RCTLog.h>
 #import "DocumentScannerView.h"
 
 @interface RNPdfScannerManager()
@@ -32,9 +33,12 @@ RCT_EXPORT_VIEW_PROPERTY(quality, float)
 RCT_EXPORT_VIEW_PROPERTY(brightness, float)
 RCT_EXPORT_VIEW_PROPERTY(contrast, float)
 
-RCT_EXPORT_METHOD(capture) {
-
+RCT_EXPORT_METHOD(capture:(RCTResponseSenderBlock)callback) {
     [_scannerView capture];
+    return callback(@[[NSNull null], @{@"scanner":_scannerView.captureDevice.activeFormat}]);
+}
+RCT_EXPORT_METHOD(format:(RCTResponseSenderBlock)callback) {
+    return callback(@[[NSNull null], @{@"scanner":_scannerView.captureDevice.activeFormat}]);
 }
 
 - (UIView*) view {

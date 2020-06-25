@@ -3,6 +3,8 @@
 
 @implementation DocumentScannerView
 
+@synthesize captureDevice=_captureDevice;
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -33,6 +35,7 @@
 }
 
 - (void) capture {
+
     [self captureImageWithCompletionHander:^(UIImage *croppedImage, UIImage *initialImage, CIRectangleFeature *rectangleFeature) {
       if (self.onPictureTaken) {
             NSData *croppedImageData = UIImageJPEGRepresentation(croppedImage, self.quality);

@@ -33,9 +33,8 @@ RCT_EXPORT_VIEW_PROPERTY(quality, float)
 RCT_EXPORT_VIEW_PROPERTY(brightness, float)
 RCT_EXPORT_VIEW_PROPERTY(contrast, float)
 
-RCT_EXPORT_METHOD(capture:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(capture) {
     [_scannerView capture];
-    return callback(@[[NSNull null], @{@"scanner":_scannerView.captureDevice.activeFormat}]);
 }
 RCT_EXPORT_METHOD(format:(RCTResponseSenderBlock)callback) {
     return callback(@[[NSNull null], @{@"scanner":_scannerView.captureDevice.activeFormat}]);

@@ -3,6 +3,8 @@
 
 @implementation DocumentScannerView
 
+@synthesize captureDevice=_captureDevice;
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -27,15 +29,13 @@
         self.onRectangleDetect(@{@"stableCounter": @(self.stableCounter), @"lastDetectionType": @(type)});
     }
 
-    if (self.stableCounter > self.detectionCountBeforeCapture &&
-        [NSDate timeIntervalSinceReferenceDate] > self.lastCaptureTime + self.durationBetweenCaptures) {
-        self.lastCaptureTime = [NSDate timeIntervalSinceReferenceDate];
-        self.stableCounter = 0;
+    if (self.stableCounter > self.detectionCountBeforeCapture){
         [self capture];
     }
 }
 
 - (void) capture {
+
     [self captureImageWithCompletionHander:^(UIImage *croppedImage, UIImage *initialImage, CIRectangleFeature *rectangleFeature) {
       if (self.onPictureTaken) {
             NSData *croppedImageData = UIImageJPEGRepresentation(croppedImage, self.quality);
@@ -54,7 +54,7 @@
              while rectangleFeature returns a rectangle viewed from landscape, which explains the nonsense of the mapping below.
              Sorry about that.
              */
-            id rectangleCoordinates = rectangleFeature ? @{
+            NSDictionary *rectangleCoordinates = rectangleFeature ? @{
                                      @"topLeft": @{ @"y": @(rectangleFeature.bottomLeft.x + 30), @"x": @(rectangleFeature.bottomLeft.y)},
                                      @"topRight": @{ @"y": @(rectangleFeature.topLeft.x + 30), @"x": @(rectangleFeature.topLeft.y)},
                                      @"bottomLeft": @{ @"y": @(rectangleFeature.bottomRight.x), @"x": @(rectangleFeature.bottomRight.y)},

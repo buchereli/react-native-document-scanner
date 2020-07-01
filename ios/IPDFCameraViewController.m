@@ -8,7 +8,6 @@
 
 #import "IPDFCameraViewController.h"
 
-#import <React/RCTInvalidating.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CoreMedia.h>
 #import <CoreVideo/CoreVideo.h>
@@ -16,7 +15,7 @@
 #import <ImageIO/ImageIO.h>
 #import <GLKit/GLKit.h>
 
-@interface IPDFCameraViewController () <AVCaptureVideoDataOutputSampleBufferDelegate, RCTInvalidating>
+@interface IPDFCameraViewController () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
 @property (nonatomic,strong) AVCaptureSession *captureSession;
 @property (nonatomic,strong) AVCaptureDevice *captureDevice;
@@ -26,9 +25,6 @@
 
 @property (nonatomic, assign) BOOL forceStop;
 @property (nonatomic, assign) float lastDetectionRate;
-
-@property (atomic, assign) BOOL isCapturing;
-@property (atomic, assign) CGFloat imageDetectionConfidence;
 
 @end
 
@@ -40,9 +36,12 @@
 
     BOOL _isStopped;
 
+    CGFloat _imageDedectionConfidence;
     NSTimer *_borderDetectTimeKeeper;
     BOOL _borderDetectFrame;
     CIRectangleFeature *_borderDetectLastRectangleFeature;
+
+    BOOL _isCapturing;
 }
 
 - (void)awakeFromNib
@@ -62,11 +61,6 @@
 - (void)_foregroundMode
 {
     self.forceStop = NO;
-}
-
-- (void)invalidate
-{
-  [self stop];
 }
 
 - (void)dealloc
@@ -112,7 +106,7 @@
     }
     if (!device) return;
 
-    self.imageDetectionConfidence = 0.0;
+    _imageDedectionConfidence = 0.0;
 
     AVCaptureSession *session = [[AVCaptureSession alloc] init];
     self.captureSession = session;
@@ -172,7 +166,7 @@
 -(void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
     if (self.forceStop) return;
-    if (_isStopped || self.isCapturing || !CMSampleBufferIsValid(sampleBuffer)) return;
+    if (_isStopped || _isCapturing || !CMSampleBufferIsValid(sampleBuffer)) return;
 
     CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)CMSampleBufferGetImageBuffer(sampleBuffer);
 
@@ -197,13 +191,13 @@
 
         if (_borderDetectLastRectangleFeature)
         {
-            self.imageDetectionConfidence += .5;
+            _imageDedectionConfidence += .5;
 
             image = [self drawHighlightOverlayForPoints:image topLeft:_borderDetectLastRectangleFeature.topLeft topRight:_borderDetectLastRectangleFeature.topRight bottomLeft:_borderDetectLastRectangleFeature.bottomLeft bottomRight:_borderDetectLastRectangleFeature.bottomRight];
         }
         else
         {
-            self.imageDetectionConfidence = 0.0f;
+            _imageDedectionConfidence = 0.0f;
         }
     }
 
@@ -313,7 +307,7 @@
 }
 
 
-- (void)focusAtPoint:(CGPoint)point completionHandler:(void(^)(void))completionHandler
+- (void)focusAtPoint:(CGPoint)point completionHandler:(void(^)())completionHandler
 {
     AVCaptureDevice *device = self.captureDevice;
     CGPoint pointOfInterest = CGPointZero;
@@ -347,10 +341,9 @@
     }
 }
 
-- (void)captureImageWithCompletionHander:(void(^)(UIImage *data, UIImage *initialData, CIRectangleFeature *rectangleFeature))completionHandler;
+- (void)captureImageWithCompletionHander:(void(^)(id data, id initialData, CIRectangleFeature *rectangleFeature))completionHandler
 {
-    if (self.isCapturing) return;
-    self.isCapturing = true;
+    if (_isCapturing) return;
 
     __weak typeof(self) weakSelf = self;
 
@@ -361,6 +354,8 @@
             [weakSelf hideGLKView:YES completion:nil];
         }];
     }];
+
+    _isCapturing = YES;
 
     AVCaptureConnection *videoConnection = nil;
     for (AVCaptureConnection *connection in self.stillImageOutput.connections)
@@ -393,7 +388,7 @@
                  enhancedImage = [self filteredImageUsingContrastFilterOnImage:enhancedImage];
              }
 
-             if (weakSelf.isBorderDetectionEnabled && rectangleDetectionConfidenceHighEnough(weakSelf.imageDetectionConfidence))
+             if (weakSelf.isBorderDetectionEnabled && rectangleDetectionConfidenceHighEnough(_imageDedectionConfidence))
              {
                  CIRectangleFeature *rectangleFeature = [self biggestRectangleInRectangles:[[self highAccuracyRectangleDetector] featuresInImage:enhancedImage]];
 
@@ -424,15 +419,15 @@
              completionHandler(initialImage, initialImage, nil);
          }
 
-         weakSelf.isCapturing = NO;
+         _isCapturing = NO;
      }];
 }
 
-- (void)hideGLKView:(BOOL)hidden completion:(void(^)(void))completion
+- (void)hideGLKView:(BOOL)hidden completion:(void(^)())completion
 {
     [UIView animateWithDuration:0.1 animations:^
     {
-        self->_glkView.alpha = (hidden) ? 0.0 : 1.0;
+        _glkView.alpha = (hidden) ? 0.0 : 1.0;
     }
     completion:^(BOOL finished)
     {
